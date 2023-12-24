@@ -2,6 +2,7 @@ package engine
 
 import (
 	"errors"
+	"html/template"
 	"net/http"
 
 	"github.com/SimpaiX-net/simpa/engine/binding"
@@ -26,7 +27,8 @@ type (
 		routes       []*Route                                                    // routes context
 		errHandler   Handler                                                     // error handler
 		panicHandler func(w http.ResponseWriter, r *http.Request, i interface{}) // panic handler
-		validator    binding.ValidatorImpl                                       // validator engine
+		validator    *binding.ValidatorImpl                                      // validator engine
+		template     *template.Template                                          // template
 	}
 )
 
@@ -40,15 +42,29 @@ func New() *Engine {
 		},
 		errHandler: defaultErrHandler,
 		router:     httprouter.New(),
-		validator:  binding.DefaultValidator,
+		validator:  &binding.DefaultValidator,
 	}
+}
+
+/*
+Set templating
+*/
+func (e *Engine) SetTemplate(temp *template.Template) {
+	e.template = temp
+}
+
+/*
+Gets the underlying templating engine if it is present
+*/
+func (e *Engine) GetTemplate() *template.Template {
+	return e.template
 }
 
 /*
 Define custom validator engine. Keep in mind that validator should be a struct pointer
 See: '/binding/validator.go' for example
 */
-func (e *Engine) SetValidatorEngine(validator binding.ValidatorImpl) {
+func (e *Engine) SetValidatorEngine(validator *binding.ValidatorImpl) {
 	e.validator = validator
 }
 
@@ -99,6 +115,7 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 			Res:    w,
 			Params: p,
 			Error:  nil,
+			temp:   e.template,
 		}
 		for _, v := range route.handlers {
 			if err := v(c); err != nil {

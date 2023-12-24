@@ -3,11 +3,14 @@ package engine
 import (
 	"encoding/json"
 	"errors"
+	"html/template"
 	"io"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
 )
+
+type H map[string]any
 
 /*
 request and response context
@@ -17,6 +20,7 @@ type Ctx struct {
 	Req    http.Request        // http request
 	Res    http.ResponseWriter // http response
 	Params httprouter.Params   // http params
+	temp   *template.Template
 }
 
 // Sends string with custom status code
@@ -59,4 +63,11 @@ func (c *Ctx) ParseJSON(dest interface{}) error {
 	}
 
 	return json.Unmarshal(b, dest)
+}
+
+/*
+Renders given HTML template file with the std go templating engine
+*/
+func (c *Ctx) RenderHTML(name string, data H) error {
+	return c.temp.ExecuteTemplate(c.Res, name, data)
 }
