@@ -23,5 +23,17 @@ func main() {
 		return c.String(200, c.Req.URL.Query().Get("name"))
 	})
 
+	app.Post("/json", func(c *engine.Ctx) error {
+		dummy := struct {
+			Name string `json:"name"`
+		}{}
+
+		if err := c.ParseJSON(&dummy); err != nil {
+			c.Error = err
+			return c.String(403, c.Error.Error())
+		}
+
+		return c.JSON(200, dummy)
+	})
 	app.Run(":2000")
 }

@@ -10,6 +10,7 @@ import (
 type (
 	Handler func(c *Ctx) error
 	Route   struct {
+		method   string
 		name     string
 		handlers []Handler
 	}
@@ -39,9 +40,9 @@ func (e *Engine) SetErrorHandler(h Handler) {
 }
 
 // get existing route by name
-func (e *Engine) GetRoute(name string) (*Route, error) {
+func (e *Engine) GetRoute(name string, method string) (*Route, error) {
 	for _, h := range e.routes {
-		if h.name == name {
+		if h.name == name && h.method == method {
 			return h, nil
 		}
 	}
@@ -54,9 +55,44 @@ func (e *Engine) Get(name string, handler ...Handler) {
 	e.routes = append(e.routes, &Route{
 		name:     name,
 		handlers: handler,
+		method:   http.MethodGet,
 	})
 	e.router.Handle(http.MethodGet, name, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		route, err := e.GetRoute(name)
+		route, err := e.GetRoute(name, http.MethodGet)
+		if err != nil {
+			w.WriteHeader(404)
+			return
+		}
+
+		c := &Ctx{
+			Req:    *r,
+			Res:    w,
+			Params: p,
+			Error:  nil,
+		}
+		for _, v := range route.handlers {
+			if err := v(c); err != nil {
+				e.errHandler(c)
+				return
+			}
+
+			if c.Error != nil {
+				e.errHandler(c)
+				return
+			}
+		}
+	})
+}
+
+// register route
+func (e *Engine) Post(name string, handler ...Handler) {
+	e.routes = append(e.routes, &Route{
+		name:     name,
+		handlers: handler,
+		method:   http.MethodPost,
+	})
+	e.router.Handle(http.MethodPost, name, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		route, err := e.GetRoute(name, http.MethodPost)
 		if err != nil {
 			w.WriteHeader(404)
 			return
