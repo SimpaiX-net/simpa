@@ -4,27 +4,35 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/SimpaiX-net/simpa/engine/binding"
 	"github.com/julienschmidt/httprouter"
 )
 
 type (
+	// route handling function
 	Handler func(c *Ctx) error
-	Route   struct {
-		method   string
-		name     string
-		handlers []Handler
+	// defines a route
+	Route struct {
+		method   string    // route methpd
+		name     string    // route name
+		handlers []Handler // route handler(s)
 	}
 )
 
 type (
+	// Engine describes the engine for the HTTP server
 	Engine struct {
-		router       *httprouter.Router
-		routes       []*Route
-		errHandler   Handler
-		panicHandler func(w http.ResponseWriter, r *http.Request, i interface{})
+		router       *httprouter.Router                                          // http router
+		routes       []*Route                                                    // routes context
+		errHandler   Handler                                                     // error handler
+		panicHandler func(w http.ResponseWriter, r *http.Request, i interface{}) // panic handler
+		validator    binding.ValidatorImpl                                       // validator engine
 	}
 )
 
+/*
+Creates new engine with default config
+*/
 func New() *Engine {
 	return &Engine{
 		panicHandler: func(w http.ResponseWriter, r *http.Request, i interface{}) {
@@ -32,14 +40,26 @@ func New() *Engine {
 		},
 		errHandler: defaultErrHandler,
 		router:     httprouter.New(),
+		validator:  binding.DefaultValidator,
 	}
 }
 
+/*
+Define custom validator engine. Keep in mind that validator should be a struct pointer
+See: '/binding/validator.go' for example
+*/
+func (e *Engine) SetValidatorEngine(validator binding.ValidatorImpl) {
+	e.validator = validator
+}
+
+/*
+Set custom error handling function
+*/
 func (e *Engine) SetErrorHandler(h Handler) {
 	e.errHandler = h
 }
 
-// get existing route by name
+// Get existing route by name and it's method
 func (e *Engine) GetRoute(name string, method string) (*Route, error) {
 	for _, h := range e.routes {
 		if h.name == name && h.method == method {
@@ -50,16 +70,17 @@ func (e *Engine) GetRoute(name string, method string) (*Route, error) {
 	return nil, errors.New("Cannot find route")
 }
 
-// register route
+// Register POST route; shorthand for 'RegisterRoute'
 func (e *Engine) Get(name string, handler ...Handler) {
 	e.RegisterRoute(name, http.MethodGet, handler...)
 }
 
-// register route
+// Register GET route; shorthand for 'RegisterRoute'
 func (e *Engine) Post(name string, handler ...Handler) {
 	e.RegisterRoute(name, http.MethodPost, handler...)
 }
 
+// Function to register route with all HTTP methods supported
 func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 	e.routes = append(e.routes, &Route{
 		name:     name,

@@ -9,13 +9,17 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+/*
+request and response context
+*/
 type Ctx struct {
-	Error  error
-	Req    http.Request
-	Res    http.ResponseWriter
-	Params httprouter.Params
+	Error  error               // represents an error
+	Req    http.Request        // http request
+	Res    http.ResponseWriter // http response
+	Params httprouter.Params   // http params
 }
 
+// Sends string with custom status code
 func (c *Ctx) String(status int, data string) error {
 	c.Res.WriteHeader(status)
 	if _, err := c.Res.Write([]byte(data)); err != nil {
@@ -25,6 +29,9 @@ func (c *Ctx) String(status int, data string) error {
 	return nil
 }
 
+// Sends JSON with 'application/json' content type.
+// 'data' is a pointer to the struct, and it is a JSON unmarshalled object
+// this function marshalls the JSON and sends it to the client
 func (c *Ctx) JSON(status int, data interface{}) error {
 	c.Res.WriteHeader(status)
 	c.Res.Header().Set("content-type", "application/json")
