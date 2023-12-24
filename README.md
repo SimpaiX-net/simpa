@@ -1,6 +1,27 @@
+<img src="https://github.com/SimpaiX-net/.github/assets/48758770/af960480-aa63-4be4-94bf-66d43453bb83" width="200" style="position: absolute; left:0;"><br>
+
 # Simpa: A Web Framework Inspired by ExpressJS
 
 Simpa is a web framework designed to cater to the specific needs of Simpaix Telegram bot integration, providing a secure HTTP server endpoint for retrieving bot updates through a webhook. While Simpa is currently in active development, it is not yet fully covered and complete.
+
+### Features
+- [x] JSON body parser 
+- [x] JSON binding support 
+- [x] Validator engine 
+- [x] Using the Fastest HTTP router 
+- [x] Built upon STD library ``net/http``
+- [x] Supports dynamic path for routes
+- [x] ExpressJS like MVC
+
+### Todo
+- [ ] Templating & rendering
+- [ ] XML binding support
+- [ ] XML body parser
+- [ ] JSON body parser support for ``map[any]any``
+- [ ] Session implementation
+- [ ] Secure cookie implementation
+- [ ] JWT ware implementation
+> You can give feedbacks using the 'Issues' tab in this repository.
 
 ## Example
 
