@@ -52,40 +52,15 @@ func (e *Engine) GetRoute(name string, method string) (*Route, error) {
 
 // register route
 func (e *Engine) Get(name string, handler ...Handler) {
-	e.routes = append(e.routes, &Route{
-		name:     name,
-		handlers: handler,
-		method:   http.MethodGet,
-	})
-	e.router.Handle(http.MethodGet, name, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		route, err := e.GetRoute(name, http.MethodGet)
-		if err != nil {
-			w.WriteHeader(404)
-			return
-		}
-
-		c := &Ctx{
-			Req:    *r,
-			Res:    w,
-			Params: p,
-			Error:  nil,
-		}
-		for _, v := range route.handlers {
-			if err := v(c); err != nil {
-				e.errHandler(c)
-				return
-			}
-
-			if c.Error != nil {
-				e.errHandler(c)
-				return
-			}
-		}
-	})
+	e.RegisterRoute(name, http.MethodGet, handler...)
 }
 
 // register route
 func (e *Engine) Post(name string, handler ...Handler) {
+	e.RegisterRoute(name, http.MethodPost, handler...)
+}
+
+func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 	e.routes = append(e.routes, &Route{
 		name:     name,
 		handlers: handler,
