@@ -1,5 +1,5 @@
 # Simpa
-Web-framework inspired from ExpressJS. The main innovation reason is to provide the Simpaix telegram bot with a http server endpoint to retrieve bot updates through webhook.
+Web-framework inspired by ExpressJS. The main innovation reason is to provide the Simpaix telegram bot with a http server endpoint to retrieve bot updates through webhook.
 
 For that reason, currently, Simpa is not fully covered and complete.
 

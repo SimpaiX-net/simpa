@@ -30,12 +30,28 @@ type (
 
 type (
 	Engine struct {
-		routes []*Route
+		routes     []*Route
+		errHandler Handler
 	}
 )
 
 func New() *Engine {
-	return &Engine{}
+	return &Engine{
+		errHandler: defaultErrHandler,
+	}
+}
+
+var defaultErrHandler Handler = func(c *Ctx) error {
+	if c.Error == nil {
+		c.Res.WriteHeader(500)
+		c.Res.Write([]byte(c.Error.Error()))
+	}
+
+	return nil
+}
+
+func (e *Engine) SetErrorHandler(h Handler) {
+	e.errHandler = h
 }
 
 // get existing route by name

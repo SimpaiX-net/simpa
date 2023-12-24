@@ -24,14 +24,12 @@ func (e *Engine) handler() http.HandlerFunc {
 		}
 		for _, v := range route.handlers {
 			if err := v(c); err != nil {
-				w.WriteHeader(500)
-				w.Write([]byte(err.Error()))
-
-				c.Error = err
+				e.errHandler(c)
 				return
 			}
 
 			if c.Error != nil {
+				e.errHandler(c)
 				return
 			}
 		}
