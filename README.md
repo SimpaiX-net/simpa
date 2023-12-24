@@ -26,13 +26,14 @@ func hello(c *engine.Ctx) error {
 
 func main() {
 	app := engine.New()
-	app.Get("/hello", hello, func(c *engine.Ctx) error {
-		fmt.Println("yo")
+	app.Get("/hello/:id", hello, func(c *engine.Ctx) error {
+		fmt.Println("id:", c.Params.ByName("id"))
 		return c.String(200, c.Req.URL.Query().Get("name"))
 	})
 
 	app.Run(":2000")
 }
+
 ```
 
 # Author

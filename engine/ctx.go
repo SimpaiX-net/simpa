@@ -1,11 +1,16 @@
 package engine
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/julienschmidt/httprouter"
+)
 
 type Ctx struct {
-	Error error
-	Req   http.Request
-	Res   http.ResponseWriter
+	Error  error
+	Req    http.Request
+	Res    http.ResponseWriter
+	Params httprouter.Params
 }
 
 func (c *Ctx) String(status int, data string) error {

@@ -5,33 +5,5 @@ import (
 )
 
 func (e *Engine) Run(addr string) {
-	http.ListenAndServe(addr, e.handler())
-}
-
-func (e *Engine) handler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		path := r.URL.Path
-		route, err := e.GetRoute(path)
-		if err != nil {
-			w.WriteHeader(404)
-			return
-		}
-
-		c := &Ctx{
-			Req:   *r,
-			Res:   w,
-			Error: nil,
-		}
-		for _, v := range route.handlers {
-			if err := v(c); err != nil {
-				e.errHandler(c)
-				return
-			}
-
-			if c.Error != nil {
-				e.errHandler(c)
-				return
-			}
-		}
-	}
+	http.ListenAndServe(addr, e.router)
 }

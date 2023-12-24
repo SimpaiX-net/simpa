@@ -2,6 +2,9 @@ package engine
 
 import (
 	"errors"
+	"net/http"
+
+	"github.com/julienschmidt/httprouter"
 )
 
 type (
@@ -14,6 +17,7 @@ type (
 
 type (
 	Engine struct {
+		router     *httprouter.Router
 		routes     []*Route
 		errHandler Handler
 	}
@@ -22,6 +26,7 @@ type (
 func New() *Engine {
 	return &Engine{
 		errHandler: defaultErrHandler,
+		router:     httprouter.New(),
 	}
 }
 
@@ -45,5 +50,30 @@ func (e *Engine) Get(name string, handler ...Handler) {
 	e.routes = append(e.routes, &Route{
 		name:     name,
 		handlers: handler,
+	})
+	e.router.Handle(http.MethodGet, name, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		route, err := e.GetRoute(name)
+		if err != nil {
+			w.WriteHeader(404)
+			return
+		}
+
+		c := &Ctx{
+			Req:    *r,
+			Res:    w,
+			Params: p,
+			Error:  nil,
+		}
+		for _, v := range route.handlers {
+			if err := v(c); err != nil {
+				e.errHandler(c)
+				return
+			}
+
+			if c.Error != nil {
+				e.errHandler(c)
+				return
+			}
+		}
 	})
 }
