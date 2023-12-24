@@ -63,8 +63,8 @@ func (e *Engine) Post(name string, handler ...Handler) {
 func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 	e.routes = append(e.routes, &Route{
 		name:     name,
+		method:   method,
 		handlers: handler,
-		method:   http.MethodPost,
 	})
 	e.router.Handle(http.MethodPost, name, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		route, err := e.GetRoute(name, http.MethodPost)
