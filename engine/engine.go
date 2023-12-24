@@ -2,23 +2,7 @@ package engine
 
 import (
 	"errors"
-	"net/http"
 )
-
-type Ctx struct {
-	Error error
-	Req   http.Request
-	Res   http.ResponseWriter
-}
-
-func (c *Ctx) String(status int, data string) error {
-	c.Res.WriteHeader(status)
-	if _, err := c.Res.Write([]byte(data)); err != nil {
-		return err
-	}
-
-	return nil
-}
 
 type (
 	Handler func(c *Ctx) error
@@ -39,15 +23,6 @@ func New() *Engine {
 	return &Engine{
 		errHandler: defaultErrHandler,
 	}
-}
-
-var defaultErrHandler Handler = func(c *Ctx) error {
-	if c.Error == nil {
-		c.Res.WriteHeader(500)
-		c.Res.Write([]byte(c.Error.Error()))
-	}
-
-	return nil
 }
 
 func (e *Engine) SetErrorHandler(h Handler) {
