@@ -17,14 +17,18 @@ type (
 
 type (
 	Engine struct {
-		router     *httprouter.Router
-		routes     []*Route
-		errHandler Handler
+		router       *httprouter.Router
+		routes       []*Route
+		errHandler   Handler
+		panicHandler func(w http.ResponseWriter, r *http.Request, i interface{})
 	}
 )
 
 func New() *Engine {
 	return &Engine{
+		panicHandler: func(w http.ResponseWriter, r *http.Request, i interface{}) {
+			w.WriteHeader(500)
+		},
 		errHandler: defaultErrHandler,
 		router:     httprouter.New(),
 	}
