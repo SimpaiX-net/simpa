@@ -5,6 +5,7 @@
 Simpa is a web framework designed to cater to the specific needs of Simpaix Telegram bot integration, providing a secure HTTP server endpoint for retrieving bot updates through a webhook. While Simpa is currently in active development, it is not yet fully covered and complete.
 
 ### Features
+- [x] HTTP2 & HTTP1.1 support
 - [x] JSON body parser 
 - [x] JSON binding support 
 - [x] Validator engine 
