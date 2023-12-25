@@ -3,7 +3,6 @@ package engine
 import (
 	"encoding/json"
 	"errors"
-	"html/template"
 	"io"
 	"net/http"
 
@@ -17,10 +16,10 @@ request and response context
 */
 type Ctx struct {
 	Error  error               // represents an error
-	Req    http.Request        // http request
+	Req    *http.Request       // http request
 	Res    http.ResponseWriter // http response
 	Params httprouter.Params   // http params
-	temp   *template.Template
+	engine *Engine
 }
 
 // Sends string with custom status code
@@ -69,5 +68,36 @@ func (c *Ctx) ParseJSON(dest interface{}) error {
 Renders given HTML template file with the std go templating engine
 */
 func (c *Ctx) RenderHTML(name string, data H) error {
-	return c.temp.ExecuteTemplate(c.Res, name, data)
+	c.Res.Header().Set("content-type", "text/html")
+	return c.engine.template.ExecuteTemplate(c.Res, name, data)
+}
+
+/*
+Sets secure cookie if `engine.SecureCookie` is set, otherwise it sets a cookie whom's value is not encrypted
+*/
+func (c *Ctx) SetCookie(cookie *http.Cookie) error {
+	if c.engine.SecureCookie != nil {
+		enc, err := c.engine.SecureCookie.MaxAge(cookie.MaxAge).Encode(cookie.Name, cookie.Value)
+		if err != nil {
+			return err
+		}
+		cookie.Value = enc
+	}
+	http.SetCookie(c.Res, cookie)
+	return nil
+}
+
+/*
+Decodes encrypted cookie named 'name' to dest
+*/
+func (c *Ctx) DecodeCookie(name string, dest interface{}) error {
+	cookie, err := c.Req.Cookie(name)
+	if err != nil {
+		return err
+	}
+
+	if err := c.engine.SecureCookie.Decode(cookie.Name, cookie.Value, dest); err != nil {
+		return err
+	}
+	return nil
 }

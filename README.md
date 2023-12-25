@@ -12,14 +12,15 @@ Simpa is a web framework designed to cater to the specific needs of Simpaix Tele
 - [x] Built upon STD library ``net/http``
 - [x] Supports dynamic path for routes
 - [x] ExpressJS like MVC
+- [x] Templating & rendering
+- [x] Limit request body
+- [x] Secure cookie implementation
 
 ### Todo
-- [ ] Templating & rendering
 - [ ] XML binding support
 - [ ] XML body parser
 - [ ] JSON body parser support for ``map[any]any``
 - [ ] Session implementation
-- [ ] Secure cookie implementation
 - [ ] JWT ware implementation
 > You can give feedbacks using the 'Issues' tab in this repository.
 

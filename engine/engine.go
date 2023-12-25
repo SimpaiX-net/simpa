@@ -2,11 +2,15 @@ package engine
 
 import (
 	"errors"
+	"fmt"
 	"html/template"
 	"net/http"
 
 	"github.com/SimpaiX-net/simpa/engine/binding"
+	"github.com/gorilla/securecookie"
 	"github.com/julienschmidt/httprouter"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 )
 
 type (
@@ -29,6 +33,8 @@ type (
 		panicHandler func(w http.ResponseWriter, r *http.Request, i interface{}) // panic handler
 		validator    *binding.ValidatorImpl                                      // validator engine
 		template     *template.Template                                          // template
+		MaxBodySize  int64
+		SecureCookie *securecookie.SecureCookie
 	}
 )
 
@@ -39,10 +45,12 @@ func New() *Engine {
 	return &Engine{
 		panicHandler: func(w http.ResponseWriter, r *http.Request, i interface{}) {
 			w.WriteHeader(500)
+			fmt.Println("recovered")
 		},
-		errHandler: defaultErrHandler,
-		router:     httprouter.New(),
-		validator:  &binding.DefaultValidator,
+		errHandler:  defaultErrHandler,
+		router:      httprouter.New(),
+		validator:   &binding.DefaultValidator,
+		MaxBodySize: 1042 * 4,
 	}
 }
 
@@ -103,22 +111,28 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 		method:   method,
 		handlers: handler,
 	})
-	e.router.Handle(http.MethodPost, name, func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		route, err := e.GetRoute(name, http.MethodPost)
+
+	var h http.HandlerFunc = func(w http.ResponseWriter, r *http.Request) {
+		route, err := e.GetRoute(name, method)
 		if err != nil {
 			w.WriteHeader(404)
 			return
 		}
 
+		v, ok := r.Context().Value(httprouter.ParamsKey).(httprouter.Params)
+		if !ok {
+			v = []httprouter.Param{}
+		}
 		c := &Ctx{
-			Req:    *r,
+			Req:    r,
 			Res:    w,
-			Params: p,
 			Error:  nil,
-			temp:   e.template,
+			Params: v,
+			engine: e,
 		}
 		for _, v := range route.handlers {
 			if err := v(c); err != nil {
+				c.Error = err
 				e.errHandler(c)
 				return
 			}
@@ -128,5 +142,7 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 				return
 			}
 		}
-	})
+	}
+
+	e.router.Handler(method, name, http.MaxBytesHandler(h2c.NewHandler(h, &http2.Server{}), e.MaxBodySize))
 }
