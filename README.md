@@ -53,9 +53,12 @@ func main() {
 	app := engine.New()
 	{
 		app.MaxBodySize = 1000000 // 1MB
+        app.SecureCookie = securecookie.New(
+            securecookie.GenerateRandomKey(32), 
+            securecookie.GenerateRandomKey(32),
+        )
 	}
 
-	app.SecureCookie = securecookie.New(securecookie.GenerateRandomKey(32), securecookie.GenerateRandomKey(32))
 	temp := template.Must(template.
 		New("views").
 		Funcs(template.FuncMap{}).
