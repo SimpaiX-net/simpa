@@ -150,11 +150,7 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 			if err := v(c); err != nil {
 				c.Error = err
 				e.errHandler(c)
-				return
-			}
 
-			if c.Error != nil {
-				e.errHandler(c)
 				return
 			}
 		}

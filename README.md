@@ -35,8 +35,8 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
+	"text/template"
 
 	"github.com/SimpaiX-net/simpa/engine"
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
@@ -107,8 +107,7 @@ func main() {
 		}{}
 
 		if err := c.BodyParser.Parse(&dummy, bodyparser.JSON); err != nil {
-			c.Error = err
-			return c.String(403, c.Error.Error())
+			return c.String(403, err.Error())
 		}
 
 		return c.JSON(200, dummy)
