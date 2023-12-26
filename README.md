@@ -36,7 +36,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"text/template"
+	"html/template"
 
 	"github.com/SimpaiX-net/simpa/engine"
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
