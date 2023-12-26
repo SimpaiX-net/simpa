@@ -7,14 +7,24 @@ import (
 	"net/http"
 )
 
+// BodyParser object
 type BodyParser struct {
-	req *http.Request
+	req *http.Request // request context
 }
 
+/*
+Creates a new bodyparser object
+*/
 func New(r *http.Request) *BodyParser {
 	return &BodyParser{r}
 }
 
+/*
+Parse request body to given binding, parses it into dest, so dest should be a pointer struct.
+Currently only parsing JSON body's is supported
+
+Soon we'll add support for multiple bindings
+*/
 func (b *BodyParser) Parse(dest interface{}, ct Binding) error {
 	switch ct {
 	case JSON:
