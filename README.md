@@ -16,6 +16,7 @@ Simpa is a web framework designed to cater to the specific needs of Simpaix Tele
 - [x] Templating & rendering
 - [x] Limit request body
 - [x] Secure cookie implementation
+- [x] Support to provide custom body parser
 
 ### Todo
 - [ ] XML binding support

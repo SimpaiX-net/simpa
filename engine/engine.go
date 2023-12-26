@@ -34,8 +34,9 @@ type (
 		panicHandler func(w http.ResponseWriter, r *http.Request, i interface{}) // panic handler
 		validator    *binding.ValidatorImpl                                      // validator engine
 		template     *template.Template                                          // template
-		MaxBodySize  int64
-		SecureCookie *securecookie.SecureCookie
+		MaxBodySize  int64                                                       // max request body size
+		SecureCookie *securecookie.SecureCookie                                  // secure cookie impl
+		bodyparser   bodyparser.BodyParserI                                      // body parser
 	}
 )
 
@@ -52,7 +53,12 @@ func New() *Engine {
 		router:      httprouter.New(),
 		validator:   &binding.DefaultValidator,
 		MaxBodySize: 1042 * 4,
+		bodyparser:  nil,
 	}
+}
+
+func (e *Engine) SetBodyParser(parser bodyparser.BodyParserI) {
+	e.bodyparser = parser
 }
 
 /*
@@ -120,6 +126,13 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 			return
 		}
 
+		p := e.bodyparser
+		if p == nil {
+			p = &bodyparser.BodyParser{}
+		}
+
+		p.New(r) // initialize request context with bodyparser
+
 		v, ok := r.Context().Value(httprouter.ParamsKey).(httprouter.Params)
 		if !ok {
 			v = []httprouter.Param{}
@@ -129,7 +142,7 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 			Res:        w,
 			Error:      nil,
 			Params:     v,
-			BodyParser: bodyparser.New(r),
+			BodyParser: p,
 			engine:     e,
 		}
 

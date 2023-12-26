@@ -13,10 +13,22 @@ type BodyParser struct {
 }
 
 /*
+the methods a body parser has to implement
+*/
+type BodyParserI interface {
+	// a parser to support multiple content type parsing
+	Parse(dest interface{}, ct Binding) error
+	// gets the corresponding request context
+	GetRequest() *http.Request
+	// function that sets request object into the bodyparser struct field 'req'
+	New(r *http.Request)
+}
+
+/*
 Creates a new bodyparser object
 */
-func New(r *http.Request) *BodyParser {
-	return &BodyParser{r}
+func (b *BodyParser) New(r *http.Request) {
+	b.req = r
 }
 
 /*
@@ -38,12 +50,20 @@ func (b *BodyParser) Parse(dest interface{}, ct Binding) error {
 	return nil
 }
 
+/*
+Gets the corresponding request context
+*/
+func (b *BodyParser) GetRequest() *http.Request {
+	return b.req
+}
+
 func (b *BodyParser) parse_json(dest interface{}) error {
-	if b.req.Header.Get("content-type") != "application/json" {
+	req := b.GetRequest()
+	if req.Header.Get("content-type") != "application/json" {
 		return errors.New("'Content-Type' is not JSON")
 	}
 
-	bd, err := io.ReadAll(b.req.Body)
+	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		return err
 	}

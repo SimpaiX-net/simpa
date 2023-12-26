@@ -18,7 +18,7 @@ type Ctx struct {
 	Req        *http.Request          // http request
 	Res        http.ResponseWriter    // http response
 	Params     httprouter.Params      // http params
-	BodyParser *bodyparser.BodyParser // body parser
+	BodyParser bodyparser.BodyParserI // body parser
 	engine     *Engine                // underlying app engine
 }
 
