@@ -32,7 +32,7 @@ type (
 		routes       []*Route                                                    // routes context
 		errHandler   Handler                                                     // error handler
 		panicHandler func(w http.ResponseWriter, r *http.Request, i interface{}) // panic handler
-		validator    *binding.ValidatorImpl                                      // validator engine
+		validator    binding.ValidatorImpl                                       // validator engine
 		template     *template.Template                                          // template
 		MaxBodySize  int64                                                       // max request body size
 		SecureCookie *securecookie.SecureCookie                                  // secure cookie impl
@@ -51,7 +51,7 @@ func New() *Engine {
 		},
 		errHandler:  defaultErrHandler,
 		router:      httprouter.New(),
-		validator:   &binding.DefaultValidator,
+		validator:   binding.DefaultValidator,
 		MaxBodySize: 1042 * 4,
 		bodyparser:  nil,
 	}
@@ -79,7 +79,7 @@ func (e *Engine) GetTemplate() *template.Template {
 Define custom validator engine. Keep in mind that validator should be a struct pointer
 See: '/binding/validator.go' for example
 */
-func (e *Engine) SetValidatorEngine(validator *binding.ValidatorImpl) {
+func (e *Engine) SetValidatorEngine(validator binding.ValidatorImpl) {
 	e.validator = validator
 }
 
@@ -128,7 +128,7 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 
 		p := e.bodyparser
 		if p == nil {
-			p = &bodyparser.BodyParser{}
+			p = bodyparser.DefaultBodyParser
 		}
 
 		p.New(r) // initialize request context with bodyparser
@@ -155,5 +155,6 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 			}
 		}
 	}
+
 	e.router.Handler(method, name, http.MaxBytesHandler(h2c.NewHandler(h, &http2.Server{}), e.MaxBodySize))
 }

@@ -25,6 +25,11 @@ type BodyParserI interface {
 }
 
 /*
+the default bodyparser
+*/
+var DefaultBodyParser BodyParserI = &BodyParser{}
+
+/*
 Creates a new bodyparser object
 */
 func (b *BodyParser) New(r *http.Request) {
