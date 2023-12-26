@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/SimpaiX-net/simpa/engine/binding"
+	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
 	"github.com/gorilla/securecookie"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/http2"
@@ -124,12 +125,14 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 			v = []httprouter.Param{}
 		}
 		c := &Ctx{
-			Req:    r,
-			Res:    w,
-			Error:  nil,
-			Params: v,
-			engine: e,
+			Req:        r,
+			Res:        w,
+			Error:      nil,
+			Params:     v,
+			BodyParser: bodyparser.New(r),
+			engine:     e,
 		}
+
 		for _, v := range route.handlers {
 			if err := v(c); err != nil {
 				c.Error = err
@@ -143,6 +146,5 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 			}
 		}
 	}
-
 	e.router.Handler(method, name, http.MaxBytesHandler(h2c.NewHandler(h, &http2.Server{}), e.MaxBodySize))
 }

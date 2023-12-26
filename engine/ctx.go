@@ -2,10 +2,9 @@ package engine
 
 import (
 	"encoding/json"
-	"errors"
-	"io"
 	"net/http"
 
+	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -15,11 +14,12 @@ type H map[string]any
 request and response context
 */
 type Ctx struct {
-	Error  error               // represents an error
-	Req    *http.Request       // http request
-	Res    http.ResponseWriter // http response
-	Params httprouter.Params   // http params
-	engine *Engine
+	Error      error                  // represents an error
+	Req        *http.Request          // http request
+	Res        http.ResponseWriter    // http response
+	Params     httprouter.Params      // http params
+	BodyParser *bodyparser.BodyParser // body parser
+	engine     *Engine                // underlying app engine
 }
 
 // Sends string with custom status code
@@ -48,20 +48,6 @@ func (c *Ctx) JSON(status int, data interface{}) error {
 		return err
 	}
 	return nil
-}
-
-// Parses JSON body to dest, it has to be a pointer.
-func (c *Ctx) ParseJSON(dest interface{}) error {
-	if c.Req.Header.Get("content-type") != "application/json" {
-		return errors.New("'Content-Type' is not JSON")
-	}
-
-	b, err := io.ReadAll(c.Req.Body)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(b, dest)
 }
 
 /*

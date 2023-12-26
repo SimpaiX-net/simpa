@@ -38,6 +38,7 @@ import (
 	"net/http"
 
 	"github.com/SimpaiX-net/simpa/engine"
+	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
 	"github.com/gorilla/securecookie"
 )
 
@@ -53,10 +54,10 @@ func main() {
 	app := engine.New()
 	{
 		app.MaxBodySize = 1000000 // 1MB
-        app.SecureCookie = securecookie.New(
-            securecookie.GenerateRandomKey(32), 
-            securecookie.GenerateRandomKey(32),
-        )
+		app.SecureCookie = securecookie.New(
+			securecookie.GenerateRandomKey(32),
+			securecookie.GenerateRandomKey(32),
+		)
 	}
 
 	temp := template.Must(template.
@@ -104,7 +105,7 @@ func main() {
 			Name string `json:"name"`
 		}{}
 
-		if err := c.ParseJSON(&dummy); err != nil {
+		if err := c.BodyParser.Parse(&dummy, bodyparser.JSON); err != nil {
 			c.Error = err
 			return c.String(403, c.Error.Error())
 		}
