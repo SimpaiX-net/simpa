@@ -1,13 +1,17 @@
 package main
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
 	"fmt"
-	"html/template"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/SimpaiX-net/simpa/engine"
+	"github.com/SimpaiX-net/simpa/engine/crypt"
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
-	"github.com/gorilla/securecookie"
 )
 
 func hello(c *engine.Ctx) error {
@@ -22,30 +26,21 @@ func main() {
 	app := engine.New()
 	{
 		app.MaxBodySize = 1000000 // 1MB
-		app.SecureCookie = securecookie.New(
-			securecookie.GenerateRandomKey(32),
-			securecookie.GenerateRandomKey(32),
-		)
+		app.SecureCookie = crypt.New(func() cipher.Block {
+			randKey := make([]byte, 32)
+			rand.Read(randKey)
+
+			aes, err := aes.NewCipher(randKey)
+			if err != nil {
+				log.Fatal("hier", err)
+			}
+
+			return aes
+		})
 	}
 
-	temp := template.Must(template.
-		New("views").
-		Funcs(template.FuncMap{}).
-		ParseGlob("views/*"),
-	)
-
-	app.SetTemplate(temp)
-
-	app.Get("/", func(c *engine.Ctx) error {
-		return c.RenderHTML("index.html", engine.H{
-			"title": struct{ Name string }{
-				Name: "Welcome Screen",
-			},
-		})
-	})
-
 	app.Get("/set", func(c *engine.Ctx) error {
-		if err := c.SetCookie(&http.Cookie{Name: "hello", Value: "123", MaxAge: 3600}); err != nil {
+		if err := c.SetCookie(&http.Cookie{Name: "hello", Value: "123", Secure: false, Expires: time.Now().Add(time.Second * 10), Path: "/"}); err != nil {
 			return err
 		}
 
@@ -55,11 +50,11 @@ func main() {
 	app.Get("/get", func(c *engine.Ctx) error {
 		cookie := &http.Cookie{}
 
-		if err := c.DecodeCookie("hello", &cookie.Value); err != nil {
+		if err := c.DecodeCookie("hello", cookie); err != nil {
 			return err
 		}
 
-		fmt.Println(cookie.Value)
+		fmt.Println("cookie value", cookie, cookie.MaxAge)
 		return c.String(200, "success")
 	})
 

@@ -2,6 +2,7 @@ package engine
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
@@ -63,12 +64,14 @@ Sets secure cookie if `engine.SecureCookie` is set, otherwise it sets a cookie w
 */
 func (c *Ctx) SetCookie(cookie *http.Cookie) error {
 	if c.engine.SecureCookie != nil {
-		enc, err := c.engine.SecureCookie.MaxAge(cookie.MaxAge).Encode(cookie.Name, cookie.Value)
+		enc, err := c.engine.SecureCookie.Encrypt(cookie.String())
 		if err != nil {
+			fmt.Println("hiero")
 			return err
 		}
 		cookie.Value = enc
 	}
+
 	http.SetCookie(c.Res, cookie)
 	return nil
 }
@@ -76,14 +79,21 @@ func (c *Ctx) SetCookie(cookie *http.Cookie) error {
 /*
 Decodes encrypted cookie named 'name' to dest
 */
-func (c *Ctx) DecodeCookie(name string, dest interface{}) error {
+func (c *Ctx) DecodeCookie(name string, dest *http.Cookie) error {
 	cookie, err := c.Req.Cookie(name)
 	if err != nil {
 		return err
 	}
 
-	if err := c.engine.SecureCookie.Decode(cookie.Name, cookie.Value, dest); err != nil {
+	decr, err := c.engine.SecureCookie.Decrypt(cookie.Value)
+	if err != nil {
 		return err
 	}
+
+	fmt.Println(decr)
+
+	cookie.Value = decr
+	*dest = *cookie
+
 	return nil
 }

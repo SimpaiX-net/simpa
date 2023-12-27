@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/SimpaiX-net/simpa/engine/binding"
+	"github.com/SimpaiX-net/simpa/engine/crypt"
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
-	"github.com/gorilla/securecookie"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -35,7 +35,7 @@ type (
 		validator    binding.ValidatorImpl                                       // validator engine
 		template     *template.Template                                          // template
 		MaxBodySize  int64                                                       // max request body size
-		SecureCookie *securecookie.SecureCookie                                  // secure cookie impl
+		SecureCookie crypt.CrypterI                                              // crypter to use for secure cookie impl
 		bodyparser   bodyparser.BodyParserI                                      // body parser
 	}
 )
