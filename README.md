@@ -19,6 +19,7 @@ Simpa is a web framework designed to cater to the specific needs of Simpaix Tele
 - [x] Support to provide custom body parser
 
 ### Todo
+- [ ] Change secure cookie implementation with custom one, to fit AES-GCM only
 - [ ] XML binding support
 - [ ] XML body parser
 - [ ] JSON body parser support for ``map[any]any``
