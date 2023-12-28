@@ -17,15 +17,21 @@ Simpa is a web framework designed to cater to the specific needs of Simpaix Tele
 - [x] Limit request body
 - [x] Secure cookie implementation
 - [x] Support to provide custom body parser
+- [x] AES_GCM and AES_CTR default crypters for secure cookie & session
+- [x] Support to provide custom crypter
 
 ### Todo
-- [ ] Change secure cookie implementation with custom one, to fit AES-GCM only
 - [ ] XML binding support
 - [ ] XML body parser
 - [ ] JSON body parser support for ``map[any]any``
 - [ ] Session implementation
 - [ ] JWT ware implementation
 > You can give feedbacks using the 'Issues' tab in this repository.
+
+##### Disclaimer
+Default crypters ``AES_GCM`` and ``AES_CTR`` were made following GoDoc and algorithm specific declarations.
+
+- The security of it is your ow responsability
 
 ## Example
 
@@ -35,13 +41,18 @@ Simpa is a web framework designed to cater to the specific needs of Simpaix Tele
 package main
 
 import (
+	"crypto/aes"
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha512"
 	"fmt"
+	"log"
 	"net/http"
-	"html/template"
+	"time"
 
 	"github.com/SimpaiX-net/simpa/engine"
+	"github.com/SimpaiX-net/simpa/engine/crypt"
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
-	"github.com/gorilla/securecookie"
 )
 
 func hello(c *engine.Ctx) error {
@@ -56,30 +67,26 @@ func main() {
 	app := engine.New()
 	{
 		app.MaxBodySize = 1000000 // 1MB
-		app.SecureCookie = securecookie.New(
-			securecookie.GenerateRandomKey(32),
-			securecookie.GenerateRandomKey(32),
-		)
+
+		{
+			/*
+				example
+			*/
+			randKey := make([]byte, 32)
+			rand.Read(randKey)
+
+			aes, err := aes.NewCipher(randKey)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			hmac := hmac.New(sha512.New, []byte("secret123"))
+			app.SecureCookie = crypt.New_AES_CTR(aes, hmac)
+		}
 	}
 
-	temp := template.Must(template.
-		New("views").
-		Funcs(template.FuncMap{}).
-		ParseGlob("views/*"),
-	)
-
-	app.SetTemplate(temp)
-
-	app.Get("/", func(c *engine.Ctx) error {
-		return c.RenderHTML("index.html", engine.H{
-			"title": struct{ Name string }{
-				Name: "Welcome Screen",
-			},
-		})
-	})
-
 	app.Get("/set", func(c *engine.Ctx) error {
-		if err := c.SetCookie(&http.Cookie{Name: "hello", Value: "123", MaxAge: 3600}); err != nil {
+		if err := c.SetCookie(&http.Cookie{Name: "hello", Value: "123", Secure: false, Expires: time.Now().Add(time.Second * 10), Path: "/"}); err != nil {
 			return err
 		}
 
@@ -89,11 +96,11 @@ func main() {
 	app.Get("/get", func(c *engine.Ctx) error {
 		cookie := &http.Cookie{}
 
-		if err := c.DecodeCookie("hello", &cookie.Value); err != nil {
+		if err := c.DecodeCookie("hello", cookie); err != nil {
 			return err
 		}
 
-		fmt.Println(cookie.Value)
+		fmt.Println("cookie value", cookie)
 		return c.String(200, "success")
 	})
 

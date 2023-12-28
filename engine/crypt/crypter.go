@@ -2,12 +2,17 @@ package crypt
 
 import (
 	"crypto/cipher"
+	"crypto/hmac"
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"hash"
 	"log"
 )
 
+/*
+Intended for cipher.Block
+*/
 type CrypterI interface {
 	/*
 		Should encrypt given data and return it in base64 format
@@ -23,26 +28,30 @@ type CrypterI interface {
 
 /*
 Default crypter type;
-uses  AES GCM algorithm
+uses  AES GCM
 */
-type Crypter struct {
+type AES_GCM struct {
 	aes_gcm cipher.AEAD
 }
 
-const Delimiter = byte('%')
-
-func New(block func() cipher.Block) *Crypter {
+/*
+Creates a new AES GCM object
+*/
+func New_AES_GCM(block func() cipher.Block) *AES_GCM {
 	gcm, err := cipher.NewGCM(block())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &Crypter{
+	return &AES_GCM{
 		aes_gcm: gcm,
 	}
 }
 
-func (c *Crypter) Encrypt(data string) (string, error) {
+/*
+Encrypts data and returns the base64 encoded string of the encrypted data or error on failure
+*/
+func (c *AES_GCM) Encrypt(data string) (string, error) {
 	nonce := make([]byte, c.aes_gcm.NonceSize())
 
 	_, err := rand.Read(nonce)
@@ -50,14 +59,16 @@ func (c *Crypter) Encrypt(data string) (string, error) {
 		return "", err
 	}
 
-	encr := c.aes_gcm.Seal(nil, nonce, []byte(data), nil)
-	encr = append(encr, Delimiter)
-	encr = append(encr, nonce...)
-
+	var encr []byte
+	encr = append(nonce, c.aes_gcm.Seal(nil, nonce, []byte(data), nil)...)
 	return base64.StdEncoding.EncodeToString(encr), nil
 }
 
-func (c *Crypter) Decrypt(data string) (string, error) {
+/*
+Decrypts data and returns the plaintext string of the encrypted data or error.
+The returned errors can be related to authentication or some sort of other failure
+*/
+func (c *AES_GCM) Decrypt(data string) (string, error) {
 	enc, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {
 		return "", err
@@ -67,13 +78,86 @@ func (c *Crypter) Decrypt(data string) (string, error) {
 	return string(decr), err
 }
 
-func (c *Crypter) deserialize(encr []byte) ([]byte, []byte, error) {
-	nonceSize := c.aes_gcm.NonceSize()
-	if len(encr) < nonceSize {
-		return nil, nil, errors.New("message too small")
+/*
+Default crypter type;
+uses  AES CTR HMAC
+*/
+type AES_CTR struct {
+	block cipher.Block
+	hmac  hash.Hash
+}
+
+/*
+Creates a new AES GCM object
+*/
+func New_AES_CTR(block cipher.Block, hmac hash.Hash) *AES_CTR {
+	return &AES_CTR{
+		block,
+		hmac,
+	}
+}
+
+/*
+Encrypts data and returns the base64 encoded string of the encrypted data or error on failure
+*/
+func (c *AES_CTR) Encrypt(data string) (string, error) {
+	ciphertext := make([]byte, c.block.BlockSize()+c.hmac.Size()+len(data))
+	iv := ciphertext[:c.block.BlockSize()]
+	mac := ciphertext[c.block.BlockSize() : c.block.BlockSize()+c.hmac.Size()]
+
+	if _, err := rand.Read(iv); err != nil {
+		return "", err
 	}
 
-	nonce := encr[:nonceSize]
-	message := encr[nonceSize:]
-	return message, nonce, nil
+	stream := cipher.NewCTR(c.block, iv)
+	stream.XORKeyStream(ciphertext[c.block.BlockSize()+c.hmac.Size():], []byte(data))
+	{
+		c.hmac.Reset()
+		if _, err := c.hmac.Write(iv); err != nil {
+			return "", err
+		}
+		if _, err := c.hmac.Write(ciphertext[c.block.BlockSize()+c.hmac.Size():]); err != nil {
+			return "", err
+		}
+
+		copy(mac, c.hmac.Sum(nil))
+	}
+
+	return base64.StdEncoding.EncodeToString(ciphertext), nil
+}
+
+/*
+Decrypts data and returns the plaintext string of the encrypted data or error.
+The returned errors can be related to authentication or some sort of other failure
+*/
+func (c *AES_CTR) Decrypt(data string) (string, error) {
+	decoded, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		return "", err
+	}
+
+	iv := decoded[:c.block.BlockSize()]
+	mac := decoded[c.block.BlockSize() : c.block.BlockSize()+c.hmac.Size()]
+	ciph := decoded[c.block.BlockSize()+c.hmac.Size():]
+
+	{
+		c.hmac.Reset()
+		if _, err := c.hmac.Write(iv); err != nil {
+			return "", err
+		}
+		if _, err := c.hmac.Write(ciph); err != nil {
+			return "", err
+		}
+
+		if !hmac.Equal(mac, c.hmac.Sum(nil)) {
+			return "", errors.New("Authentication failed")
+		}
+	}
+
+	decr := make([]byte, len(ciph))
+
+	stream := cipher.NewCTR(c.block, iv)
+	stream.XORKeyStream(decr, ciph)
+
+	return string(decr), nil
 }

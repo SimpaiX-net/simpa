@@ -2,8 +2,9 @@ package main
 
 import (
 	"crypto/aes"
-	"crypto/cipher"
+	"crypto/hmac"
 	"crypto/rand"
+	"crypto/sha512"
 	"fmt"
 	"log"
 	"net/http"
@@ -26,17 +27,22 @@ func main() {
 	app := engine.New()
 	{
 		app.MaxBodySize = 1000000 // 1MB
-		app.SecureCookie = crypt.New(func() cipher.Block {
+
+		{
+			/*
+				example
+			*/
 			randKey := make([]byte, 32)
 			rand.Read(randKey)
 
 			aes, err := aes.NewCipher(randKey)
 			if err != nil {
-				log.Fatal("hier", err)
+				log.Fatal(err)
 			}
 
-			return aes
-		})
+			hmac := hmac.New(sha512.New, []byte("secret123"))
+			app.SecureCookie = crypt.New_AES_CTR(aes, hmac)
+		}
 	}
 
 	app.Get("/set", func(c *engine.Ctx) error {
@@ -54,7 +60,7 @@ func main() {
 			return err
 		}
 
-		fmt.Println("cookie value", cookie, cookie.MaxAge)
+		fmt.Println("cookie value", cookie)
 		return c.String(200, "success")
 	})
 
