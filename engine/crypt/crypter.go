@@ -1,3 +1,11 @@
+// # Introduction
+//
+// A crypter package is intended to securely encrypt or decrypt cookie values.
+// Intended for securecookies and session cookies (which are also secure).
+//
+// # This API contains default crypters to provide example implementation to the interface
+//
+// [CrypterI]: https://pkg.go.dev/github.com/SimpaiX-net/simpa/engine/crypt#CrypterI
 package crypt
 
 import (
@@ -10,9 +18,18 @@ import (
 	"log"
 )
 
-/*
-Intended for cipher.Block
-*/
+// # CrypterI object
+// Exposes the special methods a crypter has to introduce to satisfy the crypter interface.
+//
+// For examples please consider looking at the [simpa/engine/crypt] examples.
+// Like:
+//   - AES_GCM
+//   - AES_CTR
+//
+// This crypter is used for securecookie's and sessions.
+//
+// The crypter object should be set using:
+// [Engine SecureCookie]: https://pkg.go.dev/github.com/SimpaiX-net/simpa/engine#Engines
 type CrypterI interface {
 	/*
 		Should encrypt given data and return it in base64 format
