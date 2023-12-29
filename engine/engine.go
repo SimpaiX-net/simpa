@@ -41,56 +41,9 @@ type (
 )
 
 // Creates a new app instance.
-// - See example below!
 //
 // Do not load crypter or secret keys from randomized keys each app startup.
 // Rather load them from safe environments. Make sure for them to be 32 bytes long to satisfy AES-256
-//
-// # Disclaimer
-//
-// # Example
-//
-// package main
-//
-// import (
-//
-//	"crypto/aes"
-//	"crypto/hmac"
-//	"crypto/rand"
-//	"crypto/sha512"
-//	"log"
-//
-//	"github.com/SimpaiX-net/simpa/engine"
-//	"github.com/SimpaiX-net/simpa/engine/crypt"
-//
-// )
-//
-//	func main() {
-//		app := engine.New()
-//		{
-//			app.MaxBodySize = 1000000 // 1MB
-//
-//			{
-//
-//			randKey := make([]byte, 32)
-//			rand.Read(randKey)
-//
-//			aes, err := aes.NewCipher(randKey)
-//			if err != nil {
-//				log.Fatal(err)
-//			}
-//
-//			hmac := hmac.New(sha512.New, []byte("secret123"))
-//			app.SecureCookie = crypt.New_AES_CTR(aes, hmac)
-//		}
-//	}
-//
-//	app.Get("/", func(c *engine.Ctx) error {
-//		return c.String(200, "hello")
-//	})
-//
-//		app.Run(":2000")
-//	}
 func New() *Engine {
 	return &Engine{
 		panicHandler: func(w http.ResponseWriter, r *http.Request, i interface{}) {
@@ -105,6 +58,9 @@ func New() *Engine {
 	}
 }
 
+/*
+Set custom body parser
+*/
 func (e *Engine) SetBodyParser(parser bodyparser.BodyParserI) {
 	e.bodyparser = parser
 }
