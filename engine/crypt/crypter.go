@@ -14,7 +14,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"hash"
 	"log"
 )
@@ -84,7 +83,6 @@ func (c *AES_GCM) Encrypt(data string) (string, error) {
 	var encr []byte
 	encr = append(nonce, c.aes_gcm.Seal(nil, nonce, []byte(data), nil)...)
 
-	fmt.Println(cap(encr))
 	c.hmac.Reset()
 	{
 		if _, err := c.hmac.Write([]byte(data)); err != nil {
@@ -94,7 +92,7 @@ func (c *AES_GCM) Encrypt(data string) (string, error) {
 	// magic, encr gets resliced bcs capacity increased
 	// thats why the magic works xd
 	encr = append(c.hmac.Sum(nil), encr...)
-	fmt.Println(cap(encr))
+
 	return base64.StdEncoding.EncodeToString(encr), nil
 }
 
