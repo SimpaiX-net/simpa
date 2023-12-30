@@ -59,6 +59,13 @@ func New() *Engine {
 }
 
 /*
+Serves static files
+*/
+func (e *Engine) Static(path string, root http.FileSystem) {
+	e.router.ServeFiles(path, root)
+}
+
+/*
 Set custom body parser
 */
 func (e *Engine) SetBodyParser(parser bodyparser.BodyParserI) {

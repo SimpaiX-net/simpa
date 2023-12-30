@@ -11,6 +11,6 @@ func (e *Engine) Run(addr string) {
 		log.Fatalf("SecureCookie crypter is not, set. Set it before starting the web server!")
 	}
 
-	// e.router.PanicHandler = e.panicHandler
+	e.router.PanicHandler = e.panicHandler
 	http.ListenAndServe(addr, e.router)
 }

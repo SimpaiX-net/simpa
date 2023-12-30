@@ -2,7 +2,6 @@ package engine
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
@@ -63,11 +62,7 @@ func (c *Ctx) RenderHTML(name string, data H) error {
 Sets secure cookie
 */
 func (c *Ctx) SetCookie(cookie *http.Cookie) error {
-	if c.engine.SecureCookie == nil {
-		return errors.New("Must set SecureCookie in app config")
-	}
-
-	m, err := json.Marshal(&cookie)
+	m, err := json.Marshal(cookie)
 	if err != nil {
 		return err
 	}

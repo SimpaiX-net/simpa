@@ -81,7 +81,7 @@ func main() {
 			}
 
 			hmac := hmac.New(sha512.New, []byte("secret123"))
-			app.SecureCookie = crypt.New_AES_CTR(aes, hmac)
+			app.SecureCookie = crypt.New_AES_GCM(aes, hmac)
 		}
 	}
 
@@ -122,6 +122,7 @@ func main() {
 	})
 	app.Run(":2000")
 }
+
 
 ```
 
