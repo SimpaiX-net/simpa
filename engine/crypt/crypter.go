@@ -14,6 +14,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"hash"
 	"log"
 )
@@ -80,9 +81,7 @@ func (c *AES_GCM) Encrypt(data string) (string, error) {
 		return "", err
 	}
 
-	var encr []byte
-	encr = append(nonce, c.aes_gcm.Seal(nil, nonce, []byte(data), nil)...)
-
+	encr := append(nonce, c.aes_gcm.Seal(nil, nonce, []byte(data), nil)...)
 	c.hmac.Reset()
 	{
 		if _, err := c.hmac.Write([]byte(data)); err != nil {
@@ -92,7 +91,6 @@ func (c *AES_GCM) Encrypt(data string) (string, error) {
 	// magic, encr gets resliced bcs capacity increased
 	// thats why the magic works xd
 	encr = append(c.hmac.Sum(nil), encr...)
-
 	return base64.StdEncoding.EncodeToString(encr), nil
 }
 
@@ -101,6 +99,7 @@ Decrypts data and returns the plaintext string of the encrypted data or error.
 The returned errors can be related to authentication or some sort of other failure
 */
 func (c *AES_GCM) Decrypt(data string) (string, error) {
+	fmt.Println("hoi")
 	// format of data:
 	// hmac | nonce | cipher
 	//
@@ -111,12 +110,19 @@ func (c *AES_GCM) Decrypt(data string) (string, error) {
 		return "", err
 	}
 
+	if len(enc) < c.hmac.Size()+c.aes_gcm.NonceSize() {
+		return "", errors.New("cipher to short")
+	}
+
 	decr, err := c.aes_gcm.Open(
 		nil,
 		enc[c.hmac.Size():c.hmac.Size()+c.aes_gcm.NonceSize()], // nonce
 		enc[c.hmac.Size()+c.aes_gcm.NonceSize():],              // cipher
 		nil,
 	)
+	if err != nil {
+		return "", err
+	}
 
 	c.hmac.Reset()
 	{
@@ -124,6 +130,7 @@ func (c *AES_GCM) Decrypt(data string) (string, error) {
 			return "", err
 		}
 	}
+
 	if !hmac.Equal(enc[:c.hmac.Size()], c.hmac.Sum(nil)) {
 		return "", errors.New("Authentication failed")
 	}
