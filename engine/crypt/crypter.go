@@ -196,7 +196,7 @@ func (c *AES_CTR) Decrypt(data string) (string, error) {
 		return "", err
 	}
 
-	if len(decoded) < c.block.BlockSize() {
+	if len(decoded) < c.block.BlockSize()+c.hmac.Size() {
 		return "", errors.New("cipher to short")
 	}
 
