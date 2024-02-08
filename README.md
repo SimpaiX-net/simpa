@@ -6,6 +6,8 @@ Simpa is a web-framework to cater the specific needs of SimpaiX. Backed and main
 
 See below a list of our features.
 
+##### Install
+> go get simpaix.net/arch
 ### Benchmark
 
 
