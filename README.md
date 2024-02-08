@@ -7,9 +7,10 @@ Simpa is a web-framework to cater the specific needs of SimpaiX. Backed and main
 See below a list of our features.
 
 ##### Install
-> go get github.com/SimpaiX-net/simpa
-### Benchmark
 
+> go get simpaix.net/simpa
+
+### Benchmark
 
 <img width="400" src="https://media.discordapp.net/attachments/1202265337903448174/1205225620674715679/image.png?ex=65d798d3&is=65c523d3&hm=01d740ef75623016cbcc6af0746db7e33a28a7a3f1c5da8cdde6fec2c2cefbb0&=&format=webp&quality=lossless">
 
