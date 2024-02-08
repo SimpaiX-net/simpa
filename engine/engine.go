@@ -5,15 +5,15 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/SimpaiX-net/simpa/engine/binding"
+	"github.com/SimpaiX-net/simpa/engine/crypt"
+	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
+	"github.com/SimpaiX-net/simpa/engine/sessions"
 	"github.com/go-errors/errors"
 
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
-	"simpaix.net/arch/engine/binding"
-	"simpaix.net/arch/engine/crypt"
-	"simpaix.net/arch/engine/parsers/bodyparser"
-	"simpaix.net/arch/engine/sessions"
 )
 
 type (
