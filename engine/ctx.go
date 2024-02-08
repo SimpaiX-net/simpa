@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
-	"github.com/SimpaiX-net/simpa/engine/sessions"
 	"github.com/julienschmidt/httprouter"
+	"simpaix.net/simpa/engine/parsers/bodyparser"
+	"simpaix.net/simpa/engine/sessions"
 )
 
 type H map[string]any

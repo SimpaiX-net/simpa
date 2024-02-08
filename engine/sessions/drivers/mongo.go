@@ -6,12 +6,12 @@ import (
 	"errors"
 	"time"
 
-	"github.com/SimpaiX-net/simpa/engine/crypt"
-	"github.com/SimpaiX-net/simpa/engine/sessions"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"simpaix.net/simpa/engine/crypt"
+	"simpaix.net/simpa/engine/sessions"
 )
 
 type MongoStore struct {

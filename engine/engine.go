@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/SimpaiX-net/simpa/engine/binding"
-	"github.com/SimpaiX-net/simpa/engine/crypt"
-	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
-	"github.com/SimpaiX-net/simpa/engine/sessions"
 	"github.com/go-errors/errors"
+	"simpaix.net/simpa/engine/binding"
+	"simpaix.net/simpa/engine/crypt"
+	"simpaix.net/simpa/engine/parsers/bodyparser"
+	"simpaix.net/simpa/engine/sessions"
 
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/http2"
