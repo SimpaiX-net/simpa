@@ -1,9 +1,9 @@
 package engine
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/go-errors/errors"
 
@@ -40,6 +40,7 @@ type (
 		SecureCookie crypt.CrypterI                                              // crypter to use for secure cookie impl
 		bodyparser   bodyparser.BodyParserI                                      // body parser
 		Storage      sessions.Store
+		Timeout      time.Duration // defines timeout for handlers
 	}
 )
 
@@ -50,7 +51,6 @@ type (
 func New() *Engine {
 	return &Engine{
 		panicHandler: func(w http.ResponseWriter, r *http.Request, i interface{}) {
-			fmt.Println(errors.New(i).ErrorStack())
 			w.WriteHeader(500)
 			w.Write([]byte(errors.New(i).ErrorStack()))
 		},
@@ -59,6 +59,7 @@ func New() *Engine {
 		validator:   binding.DefaultValidator,
 		MaxBodySize: 1042 * 4,
 		bodyparser:  nil,
+		Timeout:     time.Second * 10,
 	}
 }
 
@@ -170,6 +171,5 @@ func (e *Engine) RegisterRoute(name, method string, handler ...Handler) {
 			}
 		}
 	}
-
-	e.router.Handler(method, name, http.MaxBytesHandler(h2c.NewHandler(h, &http2.Server{}), e.MaxBodySize))
+	e.router.Handler(method, name, http.TimeoutHandler(http.MaxBytesHandler(h2c.NewHandler(h, &http2.Server{}), e.MaxBodySize), e.Timeout, "timeout"))
 }
