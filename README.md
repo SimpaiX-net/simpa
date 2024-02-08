@@ -12,7 +12,7 @@ See below a list of our features.
 
 Benched against our crypter and session with grateful results:
 
-<img src="400" src="https://media.discordapp.net/attachments/956310840464773200/1205166670071468072/image.png?ex=65d761ed&is=65c4eced&hm=9eff899689367d1e8220f09057cef8f4d6fc3aa677bd17f0bc128cab3ffed5d6&=&format=webp&quality=lossless">
+<img width="400" src="https://media.discordapp.net/attachments/956310840464773200/1205166670071468072/image.png?ex=65d761ed&is=65c4eced&hm=9eff899689367d1e8220f09057cef8f4d6fc3aa677bd17f0bc128cab3ffed5d6&=&format=webp&quality=lossless">
 
 
 ### Features
