@@ -1,9 +1,14 @@
 // # Introduction
 //
-// A crypter package is intended to securely encrypt or decrypt cookie values.
-// Intended for securecookies and session cookies (which are also secure).
+// Crypter package is intended to securely encrypt or decrypt encoded objects.
+// The engine uses the crypter effectively for sessions and cookies
 //
 // # This API contains default crypters to provide example implementation to the interface
+// -- Default crypters are tested for enterpise-level usage, see benchmark on main repo's README file.
+
+// Default crypters:
+// - AES GCM HMAC
+// - AES CTR HMAC
 //
 // [CrypterI]: https://pkg.go.dev/github.com/SimpaiX-net/simpa/engine/crypt#CrypterI
 package crypt
@@ -14,7 +19,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"fmt"
 	"hash"
 	"log"
 )
@@ -24,8 +28,8 @@ import (
 //
 // For examples please consider looking at the [simpa/engine/crypt] examples.
 // Like:
-//   - AES_GCM
-//   - AES_CTR
+//   - AES_GCM HMAC
+//   - AES_CTR HMAC
 //
 // This crypter is used for securecookie's and sessions.
 //
@@ -46,7 +50,7 @@ type CrypterI interface {
 
 /*
 Default crypter type;
-uses  AES GCM
+uses  AES GCM HMAC
 */
 type AES_GCM struct {
 	aes_gcm cipher.AEAD
@@ -54,7 +58,7 @@ type AES_GCM struct {
 }
 
 /*
-Creates a new AES GCM object
+Creates a new AES GCM HMAC object
 */
 func New_AES_GCM(block cipher.Block, hmac hash.Hash) *AES_GCM {
 	gcm, err := cipher.NewGCM(block)
@@ -99,7 +103,6 @@ Decrypts data and returns the plaintext string of the encrypted data or error.
 The returned errors can be related to authentication or some sort of other failure
 */
 func (c *AES_GCM) Decrypt(data string) (string, error) {
-	fmt.Println("hoi")
 	// format of data:
 	// hmac | nonce | cipher
 	//
@@ -147,7 +150,7 @@ type AES_CTR struct {
 }
 
 /*
-Creates a new AES GCM object
+Creates a new AES CTR HMAC object
 */
 func New_AES_CTR(block cipher.Block, hmac hash.Hash) *AES_CTR {
 	return &AES_CTR{

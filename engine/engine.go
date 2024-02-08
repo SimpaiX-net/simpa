@@ -1,14 +1,15 @@
 package engine
 
 import (
-	"errors"
-	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/go-errors/errors"
 
 	"github.com/SimpaiX-net/simpa/engine/binding"
 	"github.com/SimpaiX-net/simpa/engine/crypt"
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
+	"github.com/SimpaiX-net/simpa/engine/sessions"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -37,6 +38,7 @@ type (
 		MaxBodySize  int64                                                       // max request body size
 		SecureCookie crypt.CrypterI                                              // crypter to use for secure cookie impl
 		bodyparser   bodyparser.BodyParserI                                      // body parser
+		Storage      sessions.Store
 	}
 )
 
@@ -48,7 +50,7 @@ func New() *Engine {
 	return &Engine{
 		panicHandler: func(w http.ResponseWriter, r *http.Request, i interface{}) {
 			w.WriteHeader(500)
-			fmt.Println("recovered")
+			w.Write([]byte(errors.New(i).ErrorStack()))
 		},
 		errHandler:  defaultErrHandler,
 		router:      httprouter.New(),

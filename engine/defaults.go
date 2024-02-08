@@ -1,11 +1,15 @@
 package engine
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/go-errors/errors"
+)
 
 // default error handling function
 var defaultErrHandler Handler = func(c *Ctx) error {
 	if c.Error != nil {
-		c.String(500, fmt.Sprintf("[Error]: %s", c.Error.Error()))
+		c.String(500, fmt.Sprintf("[Error]: %s", errors.New(c.Error).ErrorStack()))
 	}
 
 	return nil

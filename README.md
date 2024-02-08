@@ -19,19 +19,16 @@ Simpa is a web framework designed to cater to the specific needs of Simpaix Tele
 - [x] Support to provide custom body parser
 - [x] AES_GCM and AES_CTR default crypters for secure cookie & session
 - [x] Support to provide custom crypter
+- [x] Session Implementation w/custom crypter or default crypter support
+- [x] Storage: mongo driver for storage
 
 ### Todo
 - [ ] XML binding support
 - [ ] XML body parser
 - [ ] JSON body parser support for ``map[any]any``
-- [ ] Session implementation
 - [ ] JWT ware implementation
 > You can give feedbacks using the 'Issues' tab in this repository.
 
-##### Disclaimer
-Default crypters ``AES_GCM`` and ``AES_CTR`` were made following GoDoc and algorithm specific declarations.
-
-- The security of it is your ow responsability
 
 ## Example
 
@@ -41,9 +38,9 @@ Default crypters ``AES_GCM`` and ``AES_CTR`` were made following GoDoc and algor
 package main
 
 import (
+	"context"
 	"crypto/aes"
 	"crypto/hmac"
-	"crypto/rand"
 	"crypto/sha512"
 	"fmt"
 	"log"
@@ -53,6 +50,10 @@ import (
 	"github.com/SimpaiX-net/simpa/engine"
 	"github.com/SimpaiX-net/simpa/engine/crypt"
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
+	"github.com/SimpaiX-net/simpa/engine/sessions"
+	"github.com/SimpaiX-net/simpa/engine/sessions/drivers"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func hello(c *engine.Ctx) error {
@@ -64,26 +65,69 @@ func hello(c *engine.Ctx) error {
 }
 
 func main() {
+	c, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	sess := c.Database("testdb").Collection("sessions")
+
 	app := engine.New()
 	{
+
 		app.MaxBodySize = 1000000 // 1MB
 
 		{
 			/*
 				example
 			*/
-			randKey := make([]byte, 32)
-			rand.Read(randKey)
+			key := []byte("hallowereld1234secret32323232acs")
 
-			aes, err := aes.NewCipher(randKey)
+			aes, err := aes.NewCipher(key)
 			if err != nil {
 				log.Fatal(err)
 			}
 
 			hmac := hmac.New(sha512.New, []byte("secret123"))
 			app.SecureCookie = crypt.New_AES_GCM(aes, hmac)
+			app.Storage = drivers.NewMongoStore(sess, time.Duration(time.Second*5), app.SecureCookie)
 		}
+
 	}
+
+	app.Get("/", func(c *engine.Ctx) error {
+		ck := &sessions.Config{
+			Name: "SESS_ID1",
+		}
+		sess, err := c.Session(ck)
+		if err != nil {
+			return err
+		}
+
+		v, ok := sess.Get("world").(string)
+		if !ok {
+			sess.Set("world", "a-")
+		} else {
+			sess.Set("world", v+"b-")
+		}
+
+		if err := sess.Save(c.Res); err != nil {
+			return err
+		}
+		return c.String(200, "")
+	})
+
+	app.Get("/print-world", func(c *engine.Ctx) error {
+		ck := &sessions.Config{
+			Name: "SESS_ID1",
+		}
+		sess, err := c.Session(ck)
+		if err != nil {
+			return err
+		}
+
+		return c.String(200, sess.Get("world").(string))
+	})
 
 	app.Get("/set", func(c *engine.Ctx) error {
 		if err := c.SetCookie(&http.Cookie{Name: "hello", Value: "123", Secure: false, Expires: time.Now().Add(time.Second * 10), Path: "/"}); err != nil {
@@ -122,6 +166,7 @@ func main() {
 	})
 	app.Run(":2000")
 }
+
 
 
 ```

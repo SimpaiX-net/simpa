@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/SimpaiX-net/simpa/engine/parsers/bodyparser"
+	"github.com/SimpaiX-net/simpa/engine/sessions"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -97,4 +98,16 @@ func (c *Ctx) DecodeCookie(name string, dest *http.Cookie) error {
 	}
 
 	return nil
+}
+
+func (c *Ctx) Session(config *sessions.Config) (*sessions.Session, error) {
+	sess := new(sessions.Session)
+	{
+		sess.Values = map[string]interface{}{}
+	}
+
+	sess.SetStore(c.engine.Storage)
+	sess.SetCrypter(c.engine.SecureCookie)
+
+	return sess.New(c.Req, config)
 }
