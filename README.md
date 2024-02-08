@@ -4,16 +4,13 @@
 
 Simpa is a web-framework to cater the specific needs of SimpaiX. Backed and maintained by @z3ntl3.  Simpa has inbuilt support for advanced crypto algorithms together with their integrity check and it is also known to be super rapid and robust. The API exposes advanced default mechanisms together with the option for the developer to completely modify them.
 
-
 See below a list of our features.
-
 
 ### Benchmark
 
-Benched against our crypter and session with grateful results:
+This bench is against the engine of Simpa, especially against the crypter and session store (MongoDB), at one socket rate to MongoDB. And yet amazing results!
 
 <img width="400" src="https://media.discordapp.net/attachments/956310840464773200/1205166670071468072/image.png?ex=65d761ed&is=65c4eced&hm=9eff899689367d1e8220f09057cef8f4d6fc3aa677bd17f0bc128cab3ffed5d6&=&format=webp&quality=lossless">
-
 
 ### Features
 
