@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -49,6 +50,7 @@ type (
 func New() *Engine {
 	return &Engine{
 		panicHandler: func(w http.ResponseWriter, r *http.Request, i interface{}) {
+			fmt.Println(errors.New(i).ErrorStack())
 			w.WriteHeader(500)
 			w.Write([]byte(errors.New(i).ErrorStack()))
 		},

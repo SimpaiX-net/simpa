@@ -3,7 +3,6 @@ package sessions
 import (
 	"crypto/rand"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -100,8 +99,6 @@ func (s *Session) Save(w http.ResponseWriter) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("enc: ", sid)
 
 	s.Opts.Value = sid
 

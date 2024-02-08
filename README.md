@@ -10,7 +10,7 @@ See below a list of our features.
 
 This bench is against the engine of Simpa, especially against the crypter and session store (MongoDB), at one socket rate to MongoDB. And yet amazing results!
 
-<img width="400" src="https://media.discordapp.net/attachments/956310840464773200/1205166670071468072/image.png?ex=65d761ed&is=65c4eced&hm=9eff899689367d1e8220f09057cef8f4d6fc3aa677bd17f0bc128cab3ffed5d6&=&format=webp&quality=lossless">
+<img width="400" src="https://media.discordapp.net/attachments/1063791657360818266/1205213779088904223/image.png?ex=65d78dcc&is=65c518cc&hm=a273e4cff9ffc6ecd19dd786639c9d555ec59ba2bfe0b8ecdc5b544216c63ff5&=&format=webp&quality=lossless">
 
 ### Features
 
@@ -52,6 +52,7 @@ import (
 	"crypto/aes"
 	"crypto/hmac"
 	"crypto/sha512"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -114,11 +115,11 @@ func main() {
 			return err
 		}
 
-		v, ok := sess.Get("world").(string)
+		v, ok := sess.Get("world").(float64)
 		if !ok {
-			sess.Set("world", "a-")
+			sess.Set("world", 1)
 		} else {
-			sess.Set("world", v+"b-")
+			sess.Set("world", int(v+1))
 		}
 
 		if err := sess.Save(c.Res); err != nil {
@@ -136,7 +137,12 @@ func main() {
 			return err
 		}
 
-		return c.String(200, sess.Get("world").(string))
+		v, ok := sess.Get("world").(float64)
+		if !ok {
+			return errors.New("unexpected data type")
+		}
+
+		return c.String(200, fmt.Sprintln(int(v)))
 	})
 
 	app.Get("/set", func(c *engine.Ctx) error {
