@@ -8,9 +8,8 @@ See below a list of our features.
 
 ### Benchmark
 
-This bench is against the engine of Simpa, especially against the crypter and session store (MongoDB), at one socket rate to MongoDB. And yet amazing results!
 
-<img width="400" src="https://media.discordapp.net/attachments/1063791657360818266/1205213779088904223/image.png?ex=65d78dcc&is=65c518cc&hm=a273e4cff9ffc6ecd19dd786639c9d555ec59ba2bfe0b8ecdc5b544216c63ff5&=&format=webp&quality=lossless">
+<img width="400" src="https://media.discordapp.net/attachments/1202265337903448174/1205225620674715679/image.png?ex=65d798d3&is=65c523d3&hm=01d740ef75623016cbcc6af0746db7e33a28a7a3f1c5da8cdde6fec2c2cefbb0&=&format=webp&quality=lossless">
 
 ### Features
 
