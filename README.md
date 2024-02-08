@@ -2,33 +2,46 @@
 
 # Simpa: A Web Framework Inspired by ExpressJS
 
-Simpa is a web framework designed to cater to the specific needs of Simpaix Telegram bot integration, providing a secure HTTP server endpoint for retrieving bot updates through a webhook. While Simpa is currently in active development, it is not yet fully covered and complete.
+Simpa is a web-framework to cater the specific needs of SimpaiX. Backed and maintained by @z3ntl3.  Simpa has inbuilt support for advanced crypto algorithms together with their integrity check and it is also known to be super rapid and robust. The API exposes advanced default mechanisms together with the option for the developer to completely modify them.
+
+
+See below a list of our features.
+
+
+### Benchmark
+
+Benched against our crypter and session with grateful results:
+
+<img src="400" src="https://media.discordapp.net/attachments/956310840464773200/1205166670071468072/image.png?ex=65d761ed&is=65c4eced&hm=9eff899689367d1e8220f09057cef8f4d6fc3aa677bd17f0bc128cab3ffed5d6&=&format=webp&quality=lossless">
+
 
 ### Features
-- [x] HTTP2 & HTTP1.1 support
-- [x] JSON body parser 
-- [x] JSON binding support 
-- [x] Validator engine 
-- [x] Using the Fastest HTTP router 
-- [x] Built upon STD library ``net/http``
-- [x] Supports dynamic path for routes
-- [x] ExpressJS like MVC
-- [x] Templating & rendering
-- [x] Limit request body
-- [x] Secure cookie implementation
-- [x] Support to provide custom body parser
-- [x] AES_GCM and AES_CTR default crypters for secure cookie & session
-- [x] Support to provide custom crypter
-- [x] Session Implementation w/custom crypter or default crypter support
-- [x] Storage: mongo driver for storage
+
+- [X] HTTP2 & HTTP1.1 support
+- [X] JSON body parser
+- [X] JSON binding support
+- [X] Validator engine
+- [X] Using the Fastest HTTP router
+- [X] Built upon STD library ``net/http``
+- [X] Supports dynamic path for routes
+- [X] ExpressJS like MVC
+- [X] Templating & rendering
+- [X] Limit request body
+- [X] Secure cookie implementation
+- [X] Support to provide custom body parser
+- [X] AES_GCM and AES_CTR default crypters for secure cookie & session
+- [X] Support to provide custom crypter
+- [X] Session Implementation w/custom crypter or default crypter support
+- [X] Storage: mongo driver for storage
 
 ### Todo
+
 - [ ] XML binding support
 - [ ] XML body parser
 - [ ] JSON body parser support for ``map[any]any``
 - [ ] JWT ware implementation
-> You can give feedbacks using the 'Issues' tab in this repository.
 
+> You can give feedbacks using the 'Issues' tab in this repository.
 
 ## Example
 
