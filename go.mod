@@ -1,4 +1,4 @@
-module github.com/SimpaiX-net/simpa
+module simpaix.net/arch
 
 go 1.21.1
 

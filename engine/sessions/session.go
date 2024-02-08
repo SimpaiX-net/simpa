@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/SimpaiX-net/simpa/engine/crypt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"simpaix.net/arch/engine/crypt"
 )
 
 var ErrCipher = errors.New("simpa-sessions: SID is not signed by backend, but for compability created a new session")
