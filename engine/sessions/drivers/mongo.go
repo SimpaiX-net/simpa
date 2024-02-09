@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"simpaix.net/mods/simpa/v2/engine/crypt"
-	"simpaix.net/mods/simpa/v2/engine/sessions"
+	"simpaix.net/simpa/engine/crypt"
+	"simpaix.net/simpa/engine/sessions"
 )
 
 type MongoStore struct {
