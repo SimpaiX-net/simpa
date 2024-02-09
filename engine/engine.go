@@ -6,14 +6,13 @@ import (
 	"time"
 
 	"github.com/go-errors/errors"
-	"simpaix.net/mods/simpa/engine/binding"
-	"simpaix.net/mods/simpa/engine/crypt"
-	"simpaix.net/mods/simpa/engine/parsers/bodyparser"
-	"simpaix.net/mods/simpa/engine/sessions"
-
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+	"simpaix.net/mods/simpa/v2/engine/binding"
+	"simpaix.net/mods/simpa/v2/engine/crypt"
+	"simpaix.net/mods/simpa/v2/engine/parsers/bodyparser"
+	"simpaix.net/mods/simpa/v2/engine/sessions"
 )
 
 type (

@@ -62,11 +62,11 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"simpaix.net/mods/simpa/engine"
-	"simpaix.net/mods/simpa/engine/crypt"
-	"simpaix.net/mods/simpa/engine/parsers/bodyparser"
-	"simpaix.net/mods/simpa/engine/sessions"
-	"simpaix.net/mods/simpa/engine/sessions/drivers"
+	"simpaix.net/mods/simpa/v2/engine"
+	"simpaix.net/mods/simpa/v2/engine/crypt"
+	"simpaix.net/mods/simpa/v2/engine/parsers/bodyparser"
+	"simpaix.net/mods/simpa/v2/engine/sessions"
+	"simpaix.net/mods/simpa/v2/engine/sessions/drivers"
 )
 
 func hello(c *engine.Ctx) error {
@@ -184,8 +184,6 @@ func main() {
 	})
 	app.Run(":2000")
 }
-
-
 
 ```
 
