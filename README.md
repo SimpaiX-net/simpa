@@ -8,7 +8,7 @@ See below a list of our features.
 
 ##### Install
 
-> go get simpaix.net/mods/simpa
+> go get simpaix.net/simpa
 
 ### Benchmark
 
