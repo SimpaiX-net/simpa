@@ -62,11 +62,11 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"simpaix.net/mods/simpa/v2/engine"
-	"simpaix.net/mods/simpa/v2/engine/crypt"
-	"simpaix.net/mods/simpa/v2/engine/parsers/bodyparser"
-	"simpaix.net/mods/simpa/v2/engine/sessions"
-	"simpaix.net/mods/simpa/v2/engine/sessions/drivers"
+	"simpaix.net/simpa/engine"
+	"simpaix.net/simpa/engine/crypt"
+	"simpaix.net/simpa/engine/parsers/bodyparser"
+	"simpaix.net/simpa/engine/sessions"
+	"simpaix.net/simpa/engine/sessions/drivers"
 )
 
 func hello(c *engine.Ctx) error {
