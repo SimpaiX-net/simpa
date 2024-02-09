@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
-	"simpaix.net/simpa/engine/parsers/bodyparser"
-	"simpaix.net/simpa/engine/sessions"
+	"simpaix.net/mods/simpa/engine/parsers/bodyparser"
+	"simpaix.net/mods/simpa/engine/sessions"
 )
 
 type H map[string]any

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/go-errors/errors"
-	"simpaix.net/simpa/engine/binding"
-	"simpaix.net/simpa/engine/crypt"
-	"simpaix.net/simpa/engine/parsers/bodyparser"
-	"simpaix.net/simpa/engine/sessions"
+	"simpaix.net/mods/simpa/engine/binding"
+	"simpaix.net/mods/simpa/engine/crypt"
+	"simpaix.net/mods/simpa/engine/parsers/bodyparser"
+	"simpaix.net/mods/simpa/engine/sessions"
 
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/http2"

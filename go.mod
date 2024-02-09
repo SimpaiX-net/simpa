@@ -1,4 +1,4 @@
-module simpaix.net/simpa
+module simpaix.net/mods/simpa
 
 go 1.21.1
 

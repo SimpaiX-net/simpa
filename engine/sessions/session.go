@@ -8,7 +8,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"simpaix.net/simpa/engine/crypt"
+	"simpaix.net/mods/simpa/engine/crypt"
 )
 
 var ErrCipher = errors.New("simpa-sessions: SID is not signed by backend, but for compability created a new session")
