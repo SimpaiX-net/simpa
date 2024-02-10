@@ -9,10 +9,10 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
-	"simpaix.net/simpa/engine/binding"
-	"simpaix.net/simpa/engine/crypt"
-	"simpaix.net/simpa/engine/parsers/bodyparser"
-	"simpaix.net/simpa/engine/sessions"
+	"simpaix.net/simpa/v2/engine/binding"
+	"simpaix.net/simpa/v2/engine/crypt"
+	"simpaix.net/simpa/v2/engine/parsers/bodyparser"
+	"simpaix.net/simpa/v2/engine/sessions"
 )
 
 type (

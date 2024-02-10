@@ -8,7 +8,7 @@ See below a list of our features.
 
 ##### Install
 
-> go get simpaix.net/simpa
+> go get simpaix.net/simpa/v2
 
 ### Benchmark
 
@@ -62,11 +62,11 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"simpaix.net/simpa/engine"
-	"simpaix.net/simpa/engine/crypt"
-	"simpaix.net/simpa/engine/parsers/bodyparser"
-	"simpaix.net/simpa/engine/sessions"
-	"simpaix.net/simpa/engine/sessions/drivers"
+	"simpaix.net/simpa/v2/engine"
+	"simpaix.net/simpa/v2/engine/crypt"
+	"simpaix.net/simpa/v2/engine/parsers/bodyparser"
+	"simpaix.net/simpa/v2/engine/sessions"
+	"simpaix.net/simpa/v2/engine/sessions/drivers"
 )
 
 func hello(c *engine.Ctx) error {
@@ -184,6 +184,7 @@ func main() {
 	})
 	app.Run(":2000")
 }
+
 
 ```
 
