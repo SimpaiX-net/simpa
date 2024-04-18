@@ -2,17 +2,24 @@
 
 # Simpa: A Web Framework Inspired by ExpressJS
 
-Simpa is a web-framework to cater the specific needs of SimpaiX. Backed and maintained by @z3ntl3.  Simpa has inbuilt support for advanced crypto algorithms together with their integrity check and it is also known to be super rapid and robust. The API exposes advanced default mechanisms together with the option for the developer to completely modify them.
+The main goal of Simpa is to redefine elegantness. Exposing an engine that is extensible in every aspect to it's core. Some examples of these can be Simpa's crypter interface.
+While erasing many complex duties of the developer it did not breach the ability for anyone to extent or modify.
 
-See below a list of our features.
+#### Disclaimer & note
+Please do note that Simpa is far from complete. There has been a revision planned on the core. Additionally unitests files would be added with the upcoming revision.
+
+
+Scroll further for a list of features.
 
 ##### Install
 
 > go get simpaix.net/simpa/v2
 
 ### Benchmark
+- ``30k / rqps`` on session + crypter route with ``~200ms``
+- ``600k / rqps`` on JSON processor and marshall route with ``~10-50ms``
 
-<img width="400" src="https://media.discordapp.net/attachments/1202265337903448174/1205225620674715679/image.png?ex=65d798d3&is=65c523d3&hm=01d740ef75623016cbcc6af0746db7e33a28a7a3f1c5da8cdde6fec2c2cefbb0&=&format=webp&quality=lossless">
+TODO: Video showcase and unitest files 
 
 ### Features
 
